@@ -47,9 +47,6 @@ public class Controller {
 
         }
 
-
-
-
         EventHandler<MouseEvent> ExtendedLineOnMouseClickEventHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -89,22 +86,10 @@ public class Controller {
             }
         };
 
-
-
-
         EventHandler<MouseEvent> circleOnMousePressedEventHandler = new EventHandler<MouseEvent>() {
 
             @Override
             public void handle(MouseEvent e) {
-
-//                orgSceneX = e.getSceneX();
-//                orgSceneY = e.getSceneY();
-//                System.out.println("CircleEv " + orgSceneX + " "+ orgSceneY);
-//                Node p = ((Node) (e.getSource()));
-//                //orgTranslateX = p.getTranslateX();
-//                //orgTranslateY = p.getTranslateY();
-//                //cur_selected.removeEventHandler(MouseEvent.MOUSE_PRESSED , LineOnMousePressedEventHandler);
-//                //cur_selected.removeEventHandler(MouseEvent.MOUSE_DRAGGED, LineOnMouseDraggedEventHandler);
 
             }
         };
@@ -113,16 +98,12 @@ public class Controller {
 
             @Override
             public void handle(MouseEvent e) {
+
                 startDelta.x=cur_selected.first_controller.getCenterX()-e.getX();
                 startDelta.y=cur_selected.first_controller.getCenterY()-e.getY();
                 endDelta.x=cur_selected.second_controller.getCenterX()-e.getX();
                 endDelta.y=cur_selected.second_controller.getCenterY()-e.getY();
-//                orgSceneX = e.getSceneX();
-//                orgSceneY = e.getSceneY();
-//                System.out.println("LineEv " + orgSceneX + " "+ orgSceneY);
-//                //Node p = ((Node) (e.getSource()));
-//                orgTranslateX = cur_selected.getTranslateX();
-//                orgTranslateY = cur_selected.getTranslateY();
+
             }
 
         };
@@ -132,18 +113,10 @@ public class Controller {
             @Override
             public void handle(MouseEvent e) {
 
-               // double offsetX = e.getSceneX() - orgSceneX;
-                //double offsetY = e.getSceneY() - orgSceneY;
-                //double newTranslateX = orgTranslateX + offsetX;
-                //double newTranslateY = orgTranslateY + offsetY;
                 Circle p = ((Circle) (e.getSource()));
-               // p.setTranslateX(newTranslateX);
-               // p.setTranslateY(newTranslateY);
                 p.setCenterX(e.getSceneX());
                 p.setCenterY(e.getSceneY());
-                //System.out.println("CircleEv " + p.getCenterX() + " "+ p.getCenterY());
-               // cur_selected.line.setStartX( p.getCenterX());
-               // cur_selected.line.setStartY(p.getCenterY());
+
             }
         };
 
@@ -157,17 +130,6 @@ public class Controller {
                 cur_selected.second_controller.setCenterX(e.getX()+endDelta.x);
                 cur_selected.second_controller.setCenterY(e.getY()+endDelta.y);
 
-                //Line  p= ((Line) (e.getSource()));
-                //p.setStartX(e.getX());
-
-                //double offsetX = e.getSceneX() - orgSceneX;
-                //double offsetY = e.getSceneY() - orgSceneY;
-
-                //double newTranslateX = orgTranslateX + offsetX;
-                //double newTranslateY = orgTranslateY + offsetY;
-               // Node p = ((Node) (e.getSource()));
-               // cur_selected.setTranslateX(newTranslateX);
-                //cur_selected.setTranslateY(newTranslateY);
             }
         };
     }
