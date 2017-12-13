@@ -1,5 +1,6 @@
 package Model;
 
+import Controller.Controller;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
@@ -10,13 +11,18 @@ import javafx.scene.shape.StrokeType;
 
 public class ExtendedLine extends Group {
 
+
+    public String name;
     public Line line;
     public Circle first_controller;
     public Circle second_controller;
+    public Controller.LineGroup group;
 
     public ExtendedLine()
     {
+
         line = new Line(Math.random()*500,Math.random()*500,Math.random()*500+100,Math.random()*500+100);
+        name ="Line "+ Controller.lineNumber ;
         DropShadow ds = new DropShadow();
         ds.setOffsetX(3.0);
         ds.setOffsetY(3.0);
