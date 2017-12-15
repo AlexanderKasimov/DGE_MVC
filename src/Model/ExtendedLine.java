@@ -17,11 +17,12 @@ public class ExtendedLine extends Group {
     public Circle first_controller;
     public Circle second_controller;
     public Controller.LineGroup group;
+    public Controller.ExtendedLineManipulation manipulation;
 
     public ExtendedLine()
     {
 
-        line = new Line(Math.random()*500,Math.random()*500,Math.random()*500+100,Math.random()*500+100);
+        line = new Line(Math.random()*300,Math.random()*300,Math.random()*300+100,Math.random()*300+100);
         name ="Line "+ Controller.lineNumber ;
         DropShadow ds = new DropShadow();
         ds.setOffsetX(3.0);
