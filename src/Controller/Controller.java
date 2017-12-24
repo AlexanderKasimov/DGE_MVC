@@ -4,9 +4,12 @@ import Model.ExtendedLine;
 import Model.ExtendedLineList;
 import View.Main;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Slider;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -17,16 +20,28 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Controller {
     @FXML
     AnchorPane ap = new AnchorPane();
+    @FXML
+    Slider morfSlider;
+
     static ExtendedLine cur_selected;
     static Boolean ctrlPressed=false;
+    static Boolean shiftPressed=false;
     static ArrayList<ExtendedLine> lineList=new ArrayList<ExtendedLine>();
     static ArrayList<ExtendedLine> selectedLineList=new ArrayList<ExtendedLine>();
     static ArrayList<LineGroup> groupOutliner=new ArrayList<LineGroup>();
+    static Map<ExtendedLine,ArrayList<Delta>> deltaMap= new HashMap<>();
+    static ArrayList<ExtendedLine> morfGroup1=new ArrayList<ExtendedLine>();
+    static ArrayList<ExtendedLine> morfGroup2=new ArrayList<ExtendedLine>();
+    static ArrayList<ExtendedLine> selectedForMorf=new ArrayList<ExtendedLine>();
+    static Color morfColor=Color.RED;
+    Map<ExtendedLine,ArrayList<Delta>> morfMap=new HashMap<>();
 
     public static Integer lineNumber=0;
     public static Integer groupNumber=0;
@@ -35,22 +50,76 @@ public class Controller {
     {
         if (mouseEvent.getButton().equals( MouseButton.SECONDARY))
         {
-           // System.out.println("Fired");
-            if (cur_selected!=null)
-            {
-                cur_selected.manipulation.makeUnDraggable(cur_selected);
-                cur_selected.first_controller.setVisible(false);
-                cur_selected.second_controller.setVisible(false);
-                cur_selected.line.setStroke(Color.BLACK);
-                cur_selected=null;
+            for (ExtendedLine extendedLine : lineList) {
+                extendedLine.manipulation.makeUnDraggable(extendedLine);
+                extendedLine.first_controller.setVisible(false);
+                extendedLine.second_controller.setVisible(false);
+                extendedLine.line.setStroke(Color.BLACK);
 
             }
-
-            for (ExtendedLine line:  selectedLineList) {
-                line.line.setStroke(Color.BLACK);
-            }
+//           // System.out.println("Fired");
+//            if (cur_selected!=null)
+//            {
+//                cur_selected.manipulation.makeUnDraggable(cur_selected);
+//                cur_selected.first_controller.setVisible(false);
+//                cur_selected.second_controller.setVisible(false);
+//                cur_selected.line.setStroke(Color.BLACK);
+//                cur_selected=null;
+//
+//            }
+//
+//            for (ExtendedLine line:  selectedLineList) {
+//                line.manipulation.makeUnDraggable(line);
+//                line.line.setStroke(Color.BLACK);
+//            }
+            cur_selected=null;
+            morfColor=Color.RED;
+            selectedForMorf.clear();
+            morfGroup1.clear();
+            morfGroup2.clear();
             selectedLineList.clear();
+        }
 
+    }
+
+    public void StartMorfingClicked(MouseEvent mouseEvent){
+        morfMap.clear();
+
+        ChangeListener<Number> changeListener = this::onSliderChange;
+
+
+
+        morfSlider.valueProperty().removeListener(changeListener);
+
+
+        for (ExtendedLine extendedLine : morfGroup1){
+            ArrayList<Delta> deltaList = new ArrayList<Delta>();
+            Delta start = new Delta();
+            Delta end = new Delta();
+            start.x=extendedLine.first_controller.getCenterX();
+            start.y=extendedLine.first_controller.getCenterY();
+            end.x=extendedLine.second_controller.getCenterX();
+            end.y=extendedLine.second_controller.getCenterY();
+            deltaList.add(start);
+            deltaList.add(end);
+            morfMap.put(extendedLine,deltaList);
+        }
+
+
+
+        morfSlider.valueProperty().addListener(changeListener);
+
+    }
+
+
+    private void onSliderChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        Integer index1 = 0;
+        for (ExtendedLine extendedLine : morfGroup1) {
+            extendedLine.first_controller.setCenterX(morfMap.get(extendedLine).get(0).x * (1 - newValue.doubleValue()) + morfGroup2.get(index1).first_controller.getCenterX() * newValue.doubleValue());
+            extendedLine.first_controller.setCenterY(morfMap.get(extendedLine).get(0).y * (1 - newValue.doubleValue()) + morfGroup2.get(index1).first_controller.getCenterY() * newValue.doubleValue());
+            extendedLine.second_controller.setCenterX(morfMap.get(extendedLine).get(1).x * (1 - newValue.doubleValue()) + morfGroup2.get(index1).second_controller.getCenterX() * newValue.doubleValue());
+            extendedLine.second_controller.setCenterY(morfMap.get(extendedLine).get(1).y * (1 - newValue.doubleValue()) + morfGroup2.get(index1).second_controller.getCenterY() * newValue.doubleValue());
+            index1++;
         }
 
     }
@@ -62,6 +131,28 @@ public class Controller {
         if (keyEvent.getCode().getName().equals("Ctrl")){
            ctrlPressed = true;
         }
+        if (keyEvent.getCode().getName().equals("Shift")){
+           shiftPressed = true;
+        }
+
+        if (keyEvent.getCode().getName().equals("1")){
+            for (ExtendedLine extendedLine : selectedForMorf) {
+                morfGroup1.add(extendedLine);
+            }
+            morfColor=Color.GREEN;
+            selectedForMorf.clear();
+
+        }
+
+        if (keyEvent.getCode().getName().equals("2")){
+            for (ExtendedLine extendedLine : selectedForMorf) {
+                morfGroup2.add(extendedLine);
+            }
+            morfColor=Color.RED;
+            selectedForMorf.clear();
+        }
+
+
         if (keyEvent.getCode().getName().equals("G")){
             groupNumber++;
             LineGroup lineGroup = new LineGroup("Group"+groupNumber);
@@ -118,6 +209,10 @@ public class Controller {
         if (keyEvent.getCode().getName().equals("Ctrl")){
             ctrlPressed = false;
         }
+        if (keyEvent.getCode().getName().equals("Shift")){
+            shiftPressed = false;
+        }
+
     }
 
 
@@ -153,7 +248,13 @@ public class Controller {
         EventHandler<MouseEvent> ExtendedLineOnMouseClickEventHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-               // System.out.println("Started!");
+                //System.out.println("Started!");
+                if (shiftPressed){
+                    ExtendedLine extendedLine = (ExtendedLine) event.getSource();
+                    selectedForMorf.add(extendedLine);
+                    extendedLine.line.setStroke(morfColor);
+                }
+                else
 
                 if (ctrlPressed) {
 
@@ -186,19 +287,31 @@ public class Controller {
                         while (next_group!=null);
                     }
 
+
+
+
+
+
+
+
+
                     //if (cur_selected.group!=null)
 
-//                    for (ExtendedLine line : selectedLineList) {
-//                        System.out.println(line.name);
-//                    }
+                    for (ExtendedLine line : selectedLineList) {
+                        //System.out.println(line.name);
+                        line.manipulation.makeDraggable(line);
+                    }
 
 
 
                 } else
-
+                    if (selectedLineList.isEmpty())
                 {
 
-
+                    for (ExtendedLine line : selectedLineList) {
+                        //System.out.println(line.name);
+                        line.manipulation.makeUnDraggable(line);
+                    }
                     selectedLineList.clear();
 
 
@@ -248,12 +361,32 @@ public class Controller {
 
             @Override
             public void handle(MouseEvent e) {
+               if (!selectedLineList.isEmpty()) {
+                   System.out.println("SelectedLines");
+                   deltaMap.clear();
+                   for (ExtendedLine extendedLine : selectedLineList) {
+                       ArrayList<Delta> deltaList = new ArrayList<Delta>();
+                       Delta start = new Delta();
+                       Delta end = new Delta();
+                       start.x=extendedLine.first_controller.getCenterX()-e.getX();
+                       start.y=extendedLine.first_controller.getCenterY()-e.getY();
+                       end.x=extendedLine.second_controller.getCenterX()-e.getX();
+                       end.y=extendedLine.second_controller.getCenterY()-e.getY();
+                       deltaList.add(start);
+                       deltaList.add(end);
+                       deltaMap.put(extendedLine,deltaList);
+                   }
 
-              //  System.out.println("Pressed!");
-                startDelta.x=cur_selected.first_controller.getCenterX()-e.getX();
-                startDelta.y=cur_selected.first_controller.getCenterY()-e.getY();
-                endDelta.x=cur_selected.second_controller.getCenterX()-e.getX();
-                endDelta.y=cur_selected.second_controller.getCenterY()-e.getY();
+               }
+               else{
+                     System.out.println("Pressed!");
+                   startDelta.x=cur_selected.first_controller.getCenterX()-e.getX();
+                   startDelta.y=cur_selected.first_controller.getCenterY()-e.getY();
+                   endDelta.x=cur_selected.second_controller.getCenterX()-e.getX();
+                   endDelta.y=cur_selected.second_controller.getCenterY()-e.getY();
+               }
+
+
 
             }
 
@@ -276,10 +409,23 @@ public class Controller {
             @Override
             public void handle(MouseEvent e) {
 
-                cur_selected.first_controller.setCenterX(e.getX()+startDelta.x);
-                cur_selected.first_controller.setCenterY(e.getY()+startDelta.y);
-                cur_selected.second_controller.setCenterX(e.getX()+endDelta.x);
-                cur_selected.second_controller.setCenterY(e.getY()+endDelta.y);
+                if (!selectedLineList.isEmpty()){
+                    for (ExtendedLine extendedLine : selectedLineList) {
+                        extendedLine.first_controller.setCenterX(e.getX()+deltaMap.get(extendedLine).get(0).x);
+                        extendedLine.first_controller.setCenterY(e.getY()+deltaMap.get(extendedLine).get(0).y);
+                        extendedLine.second_controller.setCenterX(e.getX()+deltaMap.get(extendedLine).get(1).x);
+                        extendedLine.second_controller.setCenterY(e.getY()+deltaMap.get(extendedLine).get(1).y);
+
+                    }
+                }
+                else
+                {
+                    cur_selected.first_controller.setCenterX(e.getX()+startDelta.x);
+                    cur_selected.first_controller.setCenterY(e.getY()+startDelta.y);
+                    cur_selected.second_controller.setCenterX(e.getX()+endDelta.x);
+                    cur_selected.second_controller.setCenterY(e.getY()+endDelta.y);
+
+                }
 
             }
         };

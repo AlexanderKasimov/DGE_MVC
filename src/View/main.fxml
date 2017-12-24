@@ -8,6 +8,8 @@
 
 <AnchorPane fx:id="ap" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" onMousePressed="#FormClicked" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Controller">
    <children>
-      <Button mnemonicParsing="false" onMouseClicked="#AddLineClicked" text="Add Line" AnchorPane.bottomAnchor="57.0" AnchorPane.rightAnchor="49.0" />
+      <Button layoutX="523.0" layoutY="85.0" mnemonicParsing="false" onMouseClicked="#AddLineClicked" prefHeight="50.0" prefWidth="70.0" text="Add Line" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="85.0" />
+      <Button layoutX="516.0" layoutY="150.0" mnemonicParsing="false" onMouseClicked="#StartMorfingClicked" prefHeight="50.0" prefWidth="70.0" text="Start Morphing" textAlignment="CENTER" wrapText="true" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="150.0" />
+      <Slider fx:id="morfSlider" layoutX="14.0" layoutY="372.0" max="1.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" />
    </children>
 </AnchorPane>
