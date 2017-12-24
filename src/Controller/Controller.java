@@ -4,24 +4,32 @@ import Model.ExtendedLine;
 import Model.ExtendedLineList;
 import View.Main;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 
 public class Controller {
@@ -29,6 +37,10 @@ public class Controller {
     AnchorPane ap = new AnchorPane();
     @FXML
     Slider morfSlider;
+    @FXML
+    VBox matrixBox;
+    @FXML
+    GridPane matrixGrid;
 
     static ExtendedLine cur_selected;
     static Boolean ctrlPressed=false;
@@ -104,12 +116,247 @@ public class Controller {
             deltaList.add(end);
             morfMap.put(extendedLine,deltaList);
         }
-
-
-
         morfSlider.valueProperty().addListener(changeListener);
 
     }
+
+    public void OpenMatrix(MouseEvent mouseEvent){
+        if (matrixBox.isVisible()){
+            matrixBox.setVisible(false);
+        }
+        else
+            matrixBox.setVisible(true);
+
+    }
+
+    public void ApplyMatrix(MouseEvent mouseEvent){
+        if (!selectedLineList.isEmpty()){
+            Double[][] matrix=new Double[3][3];
+            Integer row=0;
+            Integer col=0;
+            for (Node node : matrixGrid.getChildren()) {
+                TextField tf =(TextField) node;
+                matrix[row][col]=Double.valueOf(tf.getText());
+                col++;
+                if (col>2){
+                    col=0;
+                    row++;
+                }
+            }
+            for (ExtendedLine extendedLine : selectedLineList) {
+
+                Double x1 = extendedLine.first_controller.getCenterX();
+                Double y1 = extendedLine.first_controller.getCenterY();
+                Double x2 = extendedLine.second_controller.getCenterX();
+                Double y2 = extendedLine.second_controller.getCenterY();
+
+
+                Double[] point_1= new Double[3];
+                point_1[0]=x1;
+                point_1[1]=y1;
+                point_1[2]=1.0;
+                Double[] point_1_rez= new Double[3];
+                point_1_rez[0]=0.0;
+                point_1_rez[1]=0.0;
+                point_1_rez[2]=0.0;
+
+
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        point_1_rez[i]+=point_1[j]*matrix[j][i];
+                    }
+                }
+
+                if (point_1_rez[2]!=1.0){
+                    for (int i = 0; i < point_1_rez.length; i++) {
+                        point_1_rez[i]=point_1_rez[i]/point_1_rez[2];
+                    }
+                }
+
+                extendedLine.first_controller.setCenterX(point_1_rez[0]);
+                extendedLine.first_controller.setCenterY(point_1_rez[1]);
+
+                Double[] point_2= new Double[3];
+                point_2[0]=x2;
+                point_2[1]=y2;
+                point_2[2]=1.0;
+                Double[] point_2_rez= new Double[3];
+                point_2_rez[0]=0.0;
+                point_2_rez[1]=0.0;
+                point_2_rez[2]=0.0;
+
+
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        point_2_rez[i]+=point_2[j]*matrix[j][i];
+                    }
+                }
+
+                if (point_2_rez[2]!=1.0){
+                    for (int i = 0; i < point_2_rez.length; i++) {
+                        point_2_rez[i]=point_2_rez[i]/point_2_rez[2];
+                    }
+                }
+
+                extendedLine.second_controller.setCenterX(point_2_rez[0]);
+                extendedLine.second_controller.setCenterY(point_2_rez[1]);
+            }
+
+
+        }
+        else
+        if (cur_selected!=null){
+
+            Double x1 = cur_selected.first_controller.getCenterX();
+            Double y1 = cur_selected.first_controller.getCenterY();
+            Double x2 = cur_selected.second_controller.getCenterX();
+            Double y2 = cur_selected.second_controller.getCenterY();
+            Double[][] matrix=new Double[3][3];
+            Integer row=0;
+            Integer col=0;
+            for (Node node : matrixGrid.getChildren()) {
+                TextField tf =(TextField) node;
+                matrix[row][col]=Double.valueOf(tf.getText());
+                col++;
+                if (col>2){
+                    col=0;
+                    row++;
+                }
+            }
+
+            Double[] point_1= new Double[3];
+            point_1[0]=x1;
+            point_1[1]=y1;
+            point_1[2]=1.0;
+            Double[] point_1_rez= new Double[3];
+            point_1_rez[0]=0.0;
+            point_1_rez[1]=0.0;
+            point_1_rez[2]=0.0;
+
+
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    point_1_rez[i]+=point_1[j]*matrix[j][i];
+                }
+            }
+
+            if (point_1_rez[2]!=1.0){
+                for (int i = 0; i < point_1_rez.length; i++) {
+                    point_1_rez[i]=point_1_rez[i]/point_1_rez[2];
+                }
+            }
+
+            cur_selected.first_controller.setCenterX(point_1_rez[0]);
+            cur_selected.first_controller.setCenterY(point_1_rez[1]);
+
+            Double[] point_2= new Double[3];
+            point_2[0]=x2;
+            point_2[1]=y2;
+            point_2[2]=1.0;
+            Double[] point_2_rez= new Double[3];
+            point_2_rez[0]=0.0;
+            point_2_rez[1]=0.0;
+            point_2_rez[2]=0.0;
+
+
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    point_2_rez[i]+=point_2[j]*matrix[j][i];
+                }
+            }
+
+            if (point_2_rez[2]!=1.0){
+                for (int i = 0; i < point_2_rez.length; i++) {
+                    point_2_rez[i]=point_2_rez[i]/point_2_rez[2];
+                }
+            }
+
+            cur_selected.second_controller.setCenterX(point_2_rez[0]);
+            cur_selected.second_controller.setCenterY(point_2_rez[1]);
+
+        }
+
+
+
+
+
+    }
+
+
+    public void SaveClicked(MouseEvent mouseEvent){
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save List");
+        FileChooser.ExtensionFilter extFilter =
+                new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showSaveDialog(Main.mainStage);
+
+        String lineListInfo = "";
+        for (ExtendedLine extendedLine : lineList) {
+            lineListInfo+=extendedLine.first_controller.getCenterX() + "," + extendedLine.first_controller.getCenterY()   +","+  extendedLine.second_controller.getCenterX() + "," + extendedLine.second_controller.getCenterY()+ "," +extendedLine.name + ",";
+            if (extendedLine.group!=null){
+                lineListInfo+=extendedLine.group.name + ";";
+            }
+            else
+                lineListInfo+="null;";
+        }
+        try (FileWriter fw = new FileWriter(file.getPath())){
+            fw.write(lineListInfo);
+            fw.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public void LoadClicked(MouseEvent mouseEvent){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load List");
+        FileChooser.ExtensionFilter extFilter =
+                new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showOpenDialog(Main.mainStage);
+        try (FileReader fr = new FileReader(file.getPath())){
+            Scanner sc = new Scanner(fr);
+            String lineListInfo = "";
+            while(sc.hasNextLine()){
+                lineListInfo += sc.nextLine();
+            }
+            if (!"".equals(lineListInfo)){
+                for (ExtendedLine extendedLine : lineList) {
+                    ap.getChildren().remove(extendedLine);
+                }
+
+                lineList.clear();
+                selectedLineList.clear();
+                morfGroup1.clear();
+                morfGroup2.clear();
+                selectedForMorf.clear();
+                cur_selected=null;
+                String[] lines = lineListInfo.split(";");
+                for (String line : lines){
+                    String[] coord = line.split(",");
+                    ExtendedLine extendedLine = new ExtendedLine();
+                    extendedLine.first_controller.setCenterX(Double.valueOf(coord[0]));
+                    extendedLine.first_controller.setCenterY(Double.valueOf(coord[1]));
+                    extendedLine.second_controller.setCenterX(Double.valueOf(coord[2]));
+                    extendedLine.second_controller.setCenterY(Double.valueOf(coord[3]));
+                    extendedLine.name=coord[4];
+                    ap.getChildren().addAll(extendedLine);
+                    ExtendedLineManipulation lineManipulation = new ExtendedLineManipulation();
+                    extendedLine.manipulation = lineManipulation;
+                    extendedLine.setOnMouseClicked(lineManipulation.ExtendedLineOnMouseClickEventHandler);
+                    lineList.add(extendedLine);
+                }
+            }
+            fr.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
 
 
     private void onSliderChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -152,6 +399,13 @@ public class Controller {
             selectedForMorf.clear();
         }
 
+        if (keyEvent.getCode().getName().equals("Delete")){
+            if (cur_selected!=null){
+                lineList.remove(cur_selected);
+                ap.getChildren().remove(cur_selected);
+                cur_selected=null;
+            }
+        }
 
         if (keyEvent.getCode().getName().equals("G")){
             groupNumber++;
@@ -451,7 +705,7 @@ public class Controller {
 
     }
 
-    public class LineGroup
+    public class LineGroup implements Serializable
     {
 
        public String name;

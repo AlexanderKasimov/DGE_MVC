@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     public Canvas canvas;
+    public static Stage mainStage;
     //Controller controller;
 
     @Override
@@ -30,6 +31,7 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root2, 800, 600));
        // controller=new Controller();
         //controller.handleCtrlKey();
+        mainStage=primaryStage;
 
         canvas = new Canvas(300, 300);
         GraphicsContext gc = canvas.getGraphicsContext2D();

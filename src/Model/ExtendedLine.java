@@ -9,7 +9,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeType;
 
-public class ExtendedLine extends Group {
+import java.io.Serializable;
+
+public class ExtendedLine extends Group  {
 
 
     public String name;
@@ -21,7 +23,6 @@ public class ExtendedLine extends Group {
 
     public ExtendedLine()
     {
-
         line = new Line(Math.random()*300,Math.random()*300,Math.random()*300+100,Math.random()*300+100);
         name ="Line "+ Controller.lineNumber ;
         DropShadow ds = new DropShadow();
