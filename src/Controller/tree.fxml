@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane fx:id="ap" prefHeight="600" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.TreeController">
+   <children>
+      <VBox layoutX="636.0" layoutY="14.0" prefHeight="200.0" prefWidth="150.0" spacing="5.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+         <children>
+            <Label text="angle" />
+            <Slider fx:id="angleSlider" majorTickUnit="10.0" max="90.0" showTickLabels="true" showTickMarks="true" />
+            <Label text="probability of branching" />
+            <Slider fx:id="probSlider" majorTickUnit="3.0" max="30.0" showTickLabels="true" showTickMarks="true" />
+            <Label text="iterations" />
+            <Slider fx:id="iterationSlider" majorTickUnit="1.0" max="10.0" showTickLabels="true" showTickMarks="true" />
+            <Button mnemonicParsing="false" onMouseClicked="#Generate" text="Generate" textAlignment="CENTER">
+               <VBox.margin>
+                  <Insets left="50.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

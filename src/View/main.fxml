@@ -58,7 +58,7 @@
             <Button mnemonicParsing="false" onMouseClicked="#SaveClicked" prefHeight="50.0" prefWidth="70.0" text="Save" textAlignment="CENTER" wrapText="true" />
             <Button mnemonicParsing="false" onMouseClicked="#LoadClicked" prefHeight="50.0" prefWidth="70.0" text="Load" textAlignment="CENTER" wrapText="true" />
             <Button mnemonicParsing="false" onMouseClicked="#OpenMatrix" prefHeight="50.0" prefWidth="70.0" text="Matrix" textAlignment="CENTER" wrapText="true" />
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="70.0" text="Fractal Tree" textAlignment="CENTER" wrapText="true" />
+            <Button mnemonicParsing="false" onMouseClicked="#OpenTree" prefHeight="50.0" prefWidth="70.0" text="Fractal Tree" textAlignment="CENTER" wrapText="true" />
          </children>
       </VBox>
    </children>

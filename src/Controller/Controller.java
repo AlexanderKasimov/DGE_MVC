@@ -9,7 +9,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
@@ -23,8 +26,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import javax.swing.text.View;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,6 +125,20 @@ public class Controller {
 
     }
 
+    public void OpenTree(MouseEvent mouseEvent){
+        Parent root = null;
+        try {
+            root = FXMLLoader.load(getClass().getResource("tree.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Stage stage=new Stage();
+        stage.setTitle("Tree");
+        stage.setScene(new Scene(root, 800, 600));
+        stage.show();
+    }
+
+
     public void OpenMatrix(MouseEvent mouseEvent){
         if (matrixBox.isVisible()){
             matrixBox.setVisible(false);
@@ -128,6 +147,7 @@ public class Controller {
             matrixBox.setVisible(true);
 
     }
+
 
     public void ApplyMatrix(MouseEvent mouseEvent){
         if (!selectedLineList.isEmpty()){
@@ -456,7 +476,36 @@ public class Controller {
 
         }
 
+        if (keyEvent.getCode().getName().equals("U")){
+            if (!selectedLineList.isEmpty()){
+                LineGroup rez_group=null;
+                for (ExtendedLine extendedLine : selectedLineList) {
+                    LineGroup parent;
+                    if (extendedLine.group!=null){
+                        LineGroup cur_group=extendedLine.group;
+                        parent = cur_group.parentGroup;
+                        while (parent!=null) {
+                            cur_group=parent;
+                            parent=cur_group.parentGroup;
+                        }
+                        rez_group=cur_group;
+                        if (extendedLine.group.parentGroup==null){
+                            extendedLine.group=null;
+                        }
 
+                    }
+                }
+                if (rez_group!=null){
+                    for (LineGroup lineGroup : groupOutliner) {
+                        if (lineGroup.parentGroup==rez_group){
+                            lineGroup.parentGroup=null;
+                        }
+                    }
+                    groupOutliner.remove(rez_group);
+                }
+
+            }
+        }
     }
 
     public void keyReleased(KeyEvent keyEvent) {
