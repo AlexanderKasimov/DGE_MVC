@@ -1,10 +1,7 @@
 package Controller;
 
 import Model.ExtendedLine;
-import Model.ExtendedLineList;
 import View.Main;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -15,7 +12,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -24,12 +20,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
-import javax.swing.text.View;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,21 +67,7 @@ public class Controller {
                 extendedLine.line.setStroke(Color.BLACK);
 
             }
-//           // System.out.println("Fired");
-//            if (cur_selected!=null)
-//            {
-//                cur_selected.manipulation.makeUnDraggable(cur_selected);
-//                cur_selected.first_controller.setVisible(false);
-//                cur_selected.second_controller.setVisible(false);
-//                cur_selected.line.setStroke(Color.BLACK);
-//                cur_selected=null;
-//
-//            }
-//
-//            for (ExtendedLine line:  selectedLineList) {
-//                line.manipulation.makeUnDraggable(line);
-//                line.line.setStroke(Color.BLACK);
-//            }
+
             cur_selected=null;
             morfColor=Color.RED;
             selectedForMorf.clear();
@@ -462,10 +441,7 @@ public class Controller {
 
             }
 
-//            for (ExtendedLine line : lineList) {
-//                if (line.group!=null)
-//                System.out.println(line.group.name);
-//            }
+
 
             for (LineGroup lineGroup1 : groupOutliner) {
                 if (lineGroup1.parentGroup!=null)
@@ -531,13 +507,8 @@ public class Controller {
 
             extendedLine.line.setOnMousePressed(lineOnMousePressedEventHandler);
             extendedLine.line.setOnMouseDragged(lineOnMouseDraggedEventHandler);
-            //extendedLine.first_controller.setOnMousePressed(circleOnMousePressedEventHandler);
             extendedLine.first_controller.setOnMouseDragged(circleOnMouseDraggedEventHandler);
-           // extendedLine.second_controller.setOnMousePressed(circleOnMousePressedEventHandler);
             extendedLine.second_controller.setOnMouseDragged(circleOnMouseDraggedEventHandler);
-
-
-
         }
 
         public void makeUnDraggable(ExtendedLine extendedLine) {
@@ -583,8 +554,6 @@ public class Controller {
                             }
 
                             next_group=next_group.parentGroup;
-
-                            //needed check to otherside (isChild?)
 
                         }
                         while (next_group!=null);
@@ -638,8 +607,7 @@ public class Controller {
                         }
                     } else {
 
-                        //System.out.println("null");
-                        //System.out.println("Setted!");
+
                         ExtendedLine extendedLine = (ExtendedLine) event.getSource();
                         cur_selected = extendedLine;
                         extendedLineManipulation.makeDraggable(extendedLine);
@@ -652,13 +620,7 @@ public class Controller {
             }
         };
 
-        EventHandler<MouseEvent> circleOnMousePressedEventHandler = new EventHandler<MouseEvent>() {
 
-            @Override
-            public void handle(MouseEvent e) {
-
-            }
-        };
 
         EventHandler<MouseEvent> lineOnMousePressedEventHandler = new EventHandler<MouseEvent>() {
 
@@ -744,9 +706,7 @@ public class Controller {
         extendedLine.manipulation = lineManipulation;
         extendedLine.setOnMouseClicked(lineManipulation.ExtendedLineOnMouseClickEventHandler);
         lineList.add(extendedLine);
-//        for (ExtendedLine line : extendedLineList){
-//            System.out.println(line.name);
-//        }
+
 
     }
 
@@ -754,12 +714,11 @@ public class Controller {
 
     }
 
-    public class LineGroup implements Serializable
+    public class LineGroup
     {
 
        public String name;
        public LineGroup parentGroup;
-       public ArrayList<LineGroup> children_list;
 
         public LineGroup(String name) {
             this.name = name;
